@@ -1,14 +1,12 @@
 name: Generate pacman animation
 
 on:
-  schedule: # execute every 12 hours
-    - cron: "* */12 * * *"
-
+  schedule:
+    - cron: "0 */12 * * *"  # every 12 hours
   workflow_dispatch:
-
   push:
     branches:
-    - main
+      - main
 
 jobs:
   generate:
@@ -18,13 +16,22 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - name: generate pacman-contribution-graph.svg
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Generate pacman-contribution-graph.svg
         uses: abozanona/pacman-contribution-graph@main
         with:
           github_user_name: ${{ github.repository_owner }}
 
+          # 🎨 Custom Neon Arcade Theme
+          COLOR_BACKGROUND: "#000000"       # black
+          COLOR_DOT_EMPTY: "#1A1A1A"        # dark grey grid dots
+          COLOR_DOT_WORK: "#00FF41"         # NEON GREEN like Matrix
+          COLOR_DOT_GHOST: "#FF00FF"        # neon magenta ghost trail
+          COLOR_PACMAN: "#FFD300"           # bright arcade yellow pac-man
 
-      - name: push pacman-contribution-graph.svg to the output branch
+      - name: Deploy animation to output branch
         uses: crazy-max/ghaction-github-pages@v3.1.0
         with:
           target_branch: output
